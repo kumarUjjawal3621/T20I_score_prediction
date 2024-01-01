@@ -1,89 +1,89 @@
-import streamlit as st
+import streamlit as st 
 import pickle
-import pandas as pd
-import numpy as np
-import xgboost
-from xgboost import XGBRegressor
+
+st.title('Cricxpert')
+st.caption('Predict Team Total')
 
 pipe = pickle.load(open('pipe.pkl','rb'))
 
-teams = ['Australia',
+teams=['Pakistan',
  'India',
- 'Bangladesh',
+ 'Australia',
  'New Zealand',
- 'South Africa',
  'England',
  'West Indies',
+ 'Sri Lanka',
+ 'South Africa',
+ 'Bangladesh',
+ 'Ireland',
  'Afghanistan',
- 'Pakistan',
- 'Sri Lanka']
+ 'Zimbabwe',
+ 'Netherlands',
+ 'Scotland',
+ 'United Arab Emirates',
+ 'Hong Kong',
+ 'Oman',
+ 'Nepal',
+ 'Kenya',
+ 'Canada',
+ 'Malaysia',
+ 'Papua New Guinea',
+ 'Namibia',
+ 'Singapore',
+ 'Bermuda',
+ 'Jersey',
+ 'Vanuatu',
+ 'United States of America',
+ 'Germany',
+ 'Spain',
+ 'Kuwait',
+ 'Botswana',
+ 'Qatar',
+ 'Maldives',
+ 'Denmark',
+ 'Thailand',
+ 'Nigeria',
+ 'Guernsey',
+ 'ICC World XI',
+ 'Italy',
+ 'Uganda',
+ 'Philippines',
+ 'Belgium',
+ 'Cayman Islands',
+ 'Norway',
+ 'Ghana',
+ 'Portugal',
+ 'Romania',
+ 'Bahrain',
+ 'Luxembourg',
+ 'Gibraltar',
+ 'Bhutan',
+ 'Bulgaria',
+ 'Czech Republic',
+ 'Saudi Arabia',
+ 'Iran',
+ 'Isle of Man']
 
-cities = ['Colombo',
- 'Mirpur',
- 'Johannesburg',
- 'Dubai',
- 'Auckland',
- 'Cape Town',
- 'London',
- 'Pallekele',
- 'Barbados',
- 'Sydney',
- 'Melbourne',
- 'Durban',
- 'St Lucia',
- 'Wellington',
- 'Lauderhill',
- 'Hamilton',
- 'Centurion',
- 'Manchester',
- 'Abu Dhabi',
- 'Mumbai',
- 'Nottingham',
- 'Southampton',
- 'Mount Maunganui',
- 'Chittagong',
- 'Kolkata',
- 'Lahore',
- 'Delhi',
- 'Nagpur',
- 'Chandigarh',
- 'Adelaide',
- 'Bangalore',
- 'St Kitts',
- 'Cardiff',
- 'Christchurch',
- 'Trinidad']
+## Taking 7 inputs
+batting= st.selectbox('Batting team',sorted(teams))
 
-st.title('Cricket Score Predictor')
+bowling= st.selectbox('Bowling team', sorted(teams))
 
-col1, col2 = st.beta_columns(2)
+inn=[1,2]
+inning= st.selectbox('Inning',inn)
 
-with col1:
-    batting_team = st.selectbox('Select batting team',sorted(teams))
-with col2:
-    bowling_team = st.selectbox('Select bowling team', sorted(teams))
+score=st.number_input('Current score')
 
-city = st.selectbox('Select city',sorted(cities))
+over=st.number_input('Overs completed')
 
-col3,col4,col5 = st.beta_columns(3)
+lfor=st.number_input('Runs in Last 5 overs')
 
-with col3:
-    current_score = st.number_input('Current Score')
-with col4:
-    overs = st.number_input('Overs done(works for over>5)')
-with col5:
-    wickets = st.number_input('Wickets out')
+wickets=st.number_input('Wickets lost')
 
-last_five = st.number_input('Runs scored in last 5 overs')
+import pandas as pd
+ipt=pd.DataFrame({'over': [over],'score': [score],'wickets': [wickets],'batting': [batting],'bowling': [bowling],'inning' :[inning],'Last5oversRuns' :[lfor]})
+
 
 if st.button('Predict Score'):
-    balls_left = 120 - (overs*6)
-    wickets_left = 10 -wickets
-    crr = current_score/overs
-
-    input_df = pd.DataFrame(
-     {'batting_team': [batting_team], 'bowling_team': [bowling_team],'city':city, 'current_score': [current_score],'balls_left': [balls_left], 'wickets_left': [wickets], 'crr': [crr], 'last_five': [last_five]})
-    result = pipe.predict(input_df)
+    result = pipe.predict(ipt)
     st.header("Predicted Score - " + str(int(result[0])))
-
-
